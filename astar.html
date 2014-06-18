@@ -18,23 +18,49 @@
         var context = canvas.getContext('2d');
 
         var nodesize = 16;
-        var data = new Array(canvas.height/nodesize);
+        // Creates the 40 slots for y
+        var data = [];
+        for (var i = 0; i < canvas.height/nodesize; i++) {
+            for (var j = 0; j < canvas.width/nodesize; j++) {
+              data.push( new node(j * nodesize, i * nodesize));
+            };
+        };
 
-        populatedata();
-
-        function populatedata() {
-          for (var i = 0; i < canvas.height/nodesize; i++) {
-              for (var j = 0; j < canvas.width/nodesize; j++) {
-                  data[i] = new Array(canvas.width/nodesize);
-              };
+        function drawnodes() {
+          for (var i = 0; i < data.length; i++) {
+            data[i].draw();
           };
         };
- 
+
+        function drawgrid() {
+          // Draws the grid to see each tile
+          for (var i = 0; i < (canvas.width/this.nodesize); i++) {
+            context.beginPath();
+            context.strokeStyle = 'black';
+            context.moveTo(this.nodesize*i, 0);
+            context.lineTo(this.nodesize*i, canvas.width);
+            context.stroke();
+            context.closePath();
+          };
+          for (var i = 0; i < (canvas.height/this.nodesize); i++) {
+            context.beginPath();
+            context.strokeStyle = 'black';
+            context.moveTo(0, this.nodesize*i);
+            context.lineTo(canvas.width, this.nodesize*i);
+            context.stroke();
+            context.closePath();
+          };
+        };
+        
+
+
         function animate(canvas, context,startTime) {
           var time = (new Date()).getTime() - startTime;
           var currentTime = Date.now();
 
           context.clearRect(0, 0, canvas.width, canvas.height);
+          drawnodes();
+          drawgrid();
 
           requestAnimFrame(function() {
             animate(canvas, context, startTime);
