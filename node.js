@@ -20,12 +20,21 @@ var node = Class.extend({
                 this.southnode = null;
                 this.eastnode = null;
                 this.westnode = null;
+
+                this.g = 10;
+                this.h = 0;
+                this.f = 0;
+
             },
             draw: function(){
                 context.beginPath();
                 context.fillStyle = this.color;
                 context.fillRect(this.posX, this.posY, this.width, this.height);
                 context.closePath();
-            }
+            },
+            calculateFscore: function(){
+                this.f = this.g + this.h;
+            },
+
 
         });

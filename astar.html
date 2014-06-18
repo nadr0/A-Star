@@ -17,6 +17,8 @@
         var canvas = document.getElementById('myCanvas');
         var context = canvas.getContext('2d');
 
+        var debug = true;
+
         var nodesize = 16;
         // Creates the 40 slots for y
         var data = [];
@@ -52,7 +54,44 @@
           };
         };
         
+        function findadjacentnodes(){
+          // Finds all the adjacentnodes for every node
 
+          for (var i = 0; i < this.data.length; i++) {
+            for (var w = 0; w < this.data.length; w++) {
+              if(this.data[i].posX + (this.nodesize) === this.data[w].posX && this.data[i].posY === this.data[w].posY){
+                this.data[i].eastnode = this.data[w];
+              };
+              if(this.data[i].posX - (this.nodesize) === this.data[w].posX && this.data[i].posY === this.data[w].posY){
+                this.data[i].westnode = this.data[w];
+              };
+              if(this.data[i].posX === this.data[w].posX && this.data[i].posY + this.nodesize === this.data[w].posY){
+                this.data[i].southnode = this.data[w];
+              };
+              if(this.data[i].posX === this.data[w].posX && this.data[i].posY - this.nodesize === this.data[w].posY){
+                this.data[i].northnode = this.data[w];
+              };
+            };
+          };
+        };
+
+        findadjacentnodes();
+
+        function TESTADJACENTNODES() {
+          var node = data[72];
+          if(node.northnode != null){
+            node.northnode.color = 'blue';
+          };
+          if(node.southnode != null){
+            node.southnode.color = 'blue';
+          };
+          if(node.westnode != null){
+            node.westnode.color = 'blue';
+          };
+          if(node.eastnode != null){
+            node.eastnode.color = 'blue';
+          };
+        };
 
         function animate(canvas, context,startTime) {
           var time = (new Date()).getTime() - startTime;
@@ -60,7 +99,9 @@
 
           context.clearRect(0, 0, canvas.width, canvas.height);
           drawnodes();
-          drawgrid();
+          drawgrid(); 
+
+          if(debug){TESTADJACENTNODES();};
 
           requestAnimFrame(function() {
             animate(canvas, context, startTime);
