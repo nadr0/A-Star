@@ -1,0 +1,36 @@
+<head>
+    <script type="text/javascript" src="class.js"></script>
+
+    </head>
+    <body>
+      <canvas id="myCanvas" width="1280" height="640" style="border:1px solid #000000; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block; background-color:white; "></canvas>
+
+      <script>
+            window.requestAnimFrame = (function(callback) {
+            return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+            function(callback) {
+              window.setTimeout(callback, 1000 / 60);
+            };
+          })();
+
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');
+
+ 
+        function animate(canvas, context,startTime) {
+          var time = (new Date()).getTime() - startTime;
+          var currentTime = Date.now();
+
+          context.clearRect(0, 0, canvas.width, canvas.height);
+
+          requestAnimFrame(function() {
+            animate(canvas, context, startTime);
+          });
+        };
+
+        setTimeout(function() {
+            var startTime = (new Date()).getTime();
+            animate(canvas, context,startTime);
+          }, 1000);
+      </script>
+</body>
