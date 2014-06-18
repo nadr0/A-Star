@@ -1,5 +1,6 @@
 <head>
     <script type="text/javascript" src="class.js"></script>
+    <script type="text/javascript" src="node.js"></script>
 
     </head>
     <body>
@@ -16,6 +17,18 @@
         var canvas = document.getElementById('myCanvas');
         var context = canvas.getContext('2d');
 
+        var nodesize = 16;
+        var data = new Array(canvas.height/nodesize);
+
+        populatedata();
+
+        function populatedata() {
+          for (var i = 0; i < canvas.height/nodesize; i++) {
+              for (var j = 0; j < canvas.width/nodesize; j++) {
+                  data[i] = new Array(canvas.width/nodesize);
+              };
+          };
+        };
  
         function animate(canvas, context,startTime) {
           var time = (new Date()).getTime() - startTime;
