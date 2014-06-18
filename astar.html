@@ -17,11 +17,15 @@
         var canvas = document.getElementById('myCanvas');
         var context = canvas.getContext('2d');
 
+        // Turn debug off/on
         var debug = true;
 
+        //Node size
         var nodesize = 16;
-        // Creates the 40 slots for y
+
+        // Array for the nodes
         var data = [];
+        // Populates the array with the nodes
         for (var i = 0; i < canvas.height/nodesize; i++) {
             for (var j = 0; j < canvas.width/nodesize; j++) {
               data.push( new node(j * nodesize, i * nodesize));
@@ -29,6 +33,7 @@
         };
 
         function drawnodes() {
+          // Draws all the nodes
           for (var i = 0; i < data.length; i++) {
             data[i].draw();
           };
@@ -78,6 +83,7 @@
         findadjacentnodes();
 
         function TESTADJACENTNODES() {
+          // Debug test to see if the adjacent nodes work
           var node = data[72];
           if(node.northnode != null){
             node.northnode.color = 'blue';
