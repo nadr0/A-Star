@@ -17,6 +17,11 @@
         var canvas = document.getElementById('myCanvas');
         var context = canvas.getContext('2d');
 
+        // The starting node
+        var startnode = null;
+        // The target node
+        var targetnode = null;
+
         // Turn debug off/on
         var debug = true;
 
@@ -107,7 +112,7 @@
           drawnodes();
           drawgrid(); 
 
-          if(debug){TESTADJACENTNODES();};
+          // if(debug){TESTADJACENTNODES();};
 
           requestAnimFrame(function() {
             animate(canvas, context, startTime);
