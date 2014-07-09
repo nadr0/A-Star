@@ -60,11 +60,12 @@
             var currentTime = Date.now();
 
             context.clearRect(0, 0, canvas.width, canvas.height);
-
+            
+            pathfinder.drawAllNodes();
             DrawGrid();
 
             if(!pathfinder.targetFound){
-              pathfinder.findPath();
+                pathfinder.findPath();
             }
 
             if(!pathfinder.targetFound){

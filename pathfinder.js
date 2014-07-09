@@ -192,6 +192,13 @@ var Pathfinder = Class.extend({
             };
         };
 
+    },        
+    drawAllNodes: function(){
+        for (var i = 0; i < canvas.height/this.sizeOfTile; i++) {
+            for (var j = 0; j < canvas.width/this.sizeOfTile; j++) {
+                this.data[i][j].Update();
+            };
+        };
     },
 
 
