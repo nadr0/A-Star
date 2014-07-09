@@ -32,66 +32,66 @@ var Pathfinder = Class.extend({
         this.allNodes = [];
 
         // Data array to store the nodes also to draw/create the nodes in the grid formation
-        this.data = new Array(canvas.height/sizeOfTile);
+        this.data = new Array(canvas.height/this.sizeOfTile);
 
     },
     fillNodeArrays: function(){
 
         // creates the data array to store all the nodes
-        for (var i = 0; i < canvas.height/sizeOfTile; i++) {
-            for (var j = 0; j < canvas.width/sizeOfTile; j++) { 
-                data[i] = new Array(canvas.width/sizeOfTile);
+        for (var i = 0; i < canvas.height/this.sizeOfTile; i++) {
+            for (var j = 0; j < canvas.width/this.sizeOfTile; j++) { 
+                this.data[i] = new Array(canvas.width/this.sizeOfTile);
             };
         };
 
         // Fills the dataArray with nodes and fills the allNodes with the nodes too
-        for (var i = 0; i < canvas.height/sizeOfTile; i++) {
-            for (var j = 0; j < canvas.width/sizeOfTile; j++) {
-                data[i][j] = new Node(j*25, i*25);
-                allNodes.push(data[i][j]);
+        for (var i = 0; i < canvas.height/this.sizeOfTile; i++) {
+            for (var j = 0; j < canvas.width/this.sizeOfTile; j++) {
+                this.data[i][j] = new Node(j*25, i*25);
+                this.allNodes.push(this.data[i][j]);
             };
         };
 
     },
     drawNodes: function (){
         // Draws all the nodes in the data array
-        for (var i = 0; i < canvas.height/sizeOfTile; i++) {
-            for (var j = 0; j < canvas.width/sizeOfTile; j++) {
-                data[i][j].Update();
+        for (var i = 0; i < canvas.height/this.sizeOfTile; i++) {
+            for (var j = 0; j < canvas.width/this.sizeOfTile; j++) {
+                this.data[i][j].Update();
             };
         };
     },
     findPath: function(){
         // Is the target found?
-        if(!targetFound){
+        if(!this.targetFound){
             // If the target is not found
 
             // Determine the values for all the surrounding nodes to the current checkingNode
-            if(checkingNode.northNode){
-                adjacentNode(checkingNode, checkingNode.northNode);
+            if(this.checkingNode.northNode){
+                this.adjacentNode(this.checkingNode, this.checkingNode.northNode);
             }
 
-            if(checkingNode.southNode){
-                adjacentNode(checkingNode, checkingNode.southNode);
+            if(this.checkingNode.southNode){
+                this.adjacentNode(this.checkingNode, this.checkingNode.southNode);
             }
 
-            if(checkingNode.westNode){
-                adjacentNode(checkingNode, checkingNode.westNode);
+            if(this.checkingNode.westNode){
+                this.adjacentNode(this.checkingNode, this.checkingNode.westNode);
             }
 
-            if(checkingNode.eastNode){
-                adjacentNode(checkingNode, checkingNode.eastNode);
+            if(this.checkingNode.eastNode){
+                this.adjacentNode(this.checkingNode, this.checkingNode.eastNode);
             }
         }
 
         // If the surrounding nodes are not the target 
-        if(!targetFound){
+        if(!this.targetFound){
             // Add the checkingNode to the closedlist for it does not get checked again
-            addToCloseList(checkingNode);
+            this.addToCloseList(this.checkingNode);
             // Remove from the open lists because it does not need to be checked again
-            removeFromOpenList(checkingNode);
+            this.removeFromOpenList(this.checkingNode);
             // Find a new checking node based off the openlist and the F values of each one
-            checkingNode = getSmallestFValueNode();
+            this.checkingNode = this.getSmallestFValueNode();
         }
     },
     adjacentNode: function(currentNode, testingNode){
@@ -101,20 +101,20 @@ var Pathfinder = Class.extend({
         }
 
         // If the testingNode is the targetNode 
-        if(testingNode === targetNode){
+        if(testingNode === this.targetNode){
             // Set the parentNode of the targetNode to the currentNode 
-            targetNode.parentNode = currentNode;
+            this.targetNode.parentNode = currentNode;
             // The targetFound set to true for the findPath() stops getting called
-            targetFound = true;
+            this.targetFound = true;
             return;
         }
 
         // If the testingNode is not in the closed list - (Has already been checked) 
-        if(!checkClosedList(testingNode)){
+        if(!this.checkClosedList(testingNode)){
             // If is the testingNode is in the openList
 
-            if(checkOpenList(testingNode)){
-                var newGCost = currentNode.g + moveCost;
+            if(this.checkOpenList(testingNode)){
+                var newGCost = currentNode.g + this.moveCost;
                 if(newGCost < testingNode.g){
                     testingNode.parentNode = currentNode;
                     testingNode.g = newGCost;
@@ -122,72 +122,72 @@ var Pathfinder = Class.extend({
                 }
             }else{
                 testingNode.parentNode = currentNode;
-                testingNode.g = currentNode.g + moveCost;
+                testingNode.g = currentNode.g + this.moveCost;
                 testingNode.calculateFValue();
-                addToOpenList(testingNode);
+                this.addToOpenList(testingNode);
             }
         }
     },
     checkClosedList: function(testing){
-        for (var i = 0; i < closedList.length; i++) {
-            if(testing === closedList[i]){
+        for (var i = 0; i < this.closedList.length; i++) {
+            if(testing === this.closedList[i]){
                 return true;
             }
         };
         return false;
     },        
     checkOpenList: function(testing){
-        for (var i = 0; i < openList.length; i++) {
-            if(testing === openList[i]){
+        for (var i = 0; i < this.openList.length; i++) {
+            if(testing === this.openList[i]){
                 return true;
             }
         };
         return false;
     },
     addToOpenList: function(node){
-        openList.push(node);
+        this.openList.push(node);
     },
     addToCloseList: function(node){
-    node.fillStyle = 'Cyan';
-        closedList.push(node)
+        node.fillStyle = 'Cyan';
+        this.closedList.push(node)
     },
     removeFromOpenList: function(node){
-        var index = openList.indexOf(node);
-        openList.splice(index, 1);
+        var index = this.openList.indexOf(node);
+        this.openList.splice(index, 1);
     },
     getSmallestFValueNode: function(){
-        var returnNode = openList[0];
-        var lowestFValue = openList[0].f;
+        var returnNode = this.openList[0];
+        var lowestFValue = this.openList[0].f;
 
-        for (var i = 0; i < openList.length; i++) {
-            if(openList[i].f < lowestFValue){
-                lowestFValue = openList[i].f;
-                returnNode = openList[i];
+        for (var i = 0; i < this.openList.length; i++) {
+            if(this.openList[i].f < lowestFValue){
+                lowestFValue = this.openList[i].f;
+                returnNode = this.openList[i];
             }
         };
         return returnNode;
     },
     CacluateHueristics: function(){
-        for (var i = 0; i < allNodes.length; i++) {
-            var hueristic = 10 * (  Math.abs(allNodes[i].pos.x - targetNode.pos.x) + Math.abs(allNodes[i].pos.y - targetNode.pos.y)   );
-            allNodes[i].h = hueristic;
+        for (var i = 0; i < this.allNodes.length; i++) {
+            var hueristic = 10 * (  Math.abs(this.allNodes[i].pos.x - this.targetNode.pos.x) + Math.abs(this.allNodes[i].pos.y - this.targetNode.pos.y)   );
+            this.allNodes[i].h = hueristic;
         };
     },
     findAdjacentNodes: function(){
 
-        for (var i = 0; i < allNodes.length; i++) {
-            for (var w = 0; w < allNodes.length; w++) {
-                if(allNodes[i].pos.x + (sizeOfTile) === allNodes[w].pos.x && allNodes[i].pos.y === allNodes[w].pos.y){
-                    allNodes[i].eastNode = allNodes[w];
+        for (var i = 0; i < this.allNodes.length; i++) {
+            for (var w = 0; w < this.allNodes.length; w++) {
+                if(this.allNodes[i].pos.x + (this.sizeOfTile) === this.allNodes[w].pos.x && this.allNodes[i].pos.y === this.allNodes[w].pos.y){
+                    this.allNodes[i].eastNode = this.allNodes[w];
                 }
-                if(allNodes[i].pos.x - (sizeOfTile) === allNodes[w].pos.x && allNodes[i].pos.y === allNodes[w].pos.y){
-                    allNodes[i].westNode = allNodes[w];
+                if(this.allNodes[i].pos.x - (this.sizeOfTile) === this.allNodes[w].pos.x && this.allNodes[i].pos.y === this.allNodes[w].pos.y){
+                    this.allNodes[i].westNode = this.allNodes[w];
                 }
-                if(allNodes[i].pos.x === allNodes[w].pos.x && allNodes[i].pos.y + sizeOfTile === allNodes[w].pos.y){
-                    allNodes[i].southNode = allNodes[w];
+                if(this.allNodes[i].pos.x === this.allNodes[w].pos.x && this.allNodes[i].pos.y + this.sizeOfTile === this.allNodes[w].pos.y){
+                    this.allNodes[i].southNode = this.allNodes[w];
                 }
-                if(allNodes[i].pos.x === allNodes[w].pos.x && allNodes[i].pos.y - sizeOfTile === allNodes[w].pos.y){
-                    allNodes[i].northNode = allNodes[w];
+                if(this.allNodes[i].pos.x === this.allNodes[w].pos.x && this.allNodes[i].pos.y - this.sizeOfTile === this.allNodes[w].pos.y){
+                    this.allNodes[i].northNode = this.allNodes[w];
                 }
             };
         };

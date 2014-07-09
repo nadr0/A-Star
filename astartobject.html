@@ -16,11 +16,21 @@
             };
           })();
 
-        var lastTime = Date.now();
-
-
         var canvas = document.getElementById('myCanvas');
         var context = canvas.getContext('2d');
+        var lastTime = Date.now();
+
+        var pathfinder = new Pathfinder();
+
+        pathfinder.fillNodeArrays();       
+        pathfinder.findAdjacentNodes();
+
+        pathfinder.startNode = pathfinder.allNodes[0];
+        pathfinder.checkingNode = pathfinder.startNode;
+        pathfinder.targetNode = pathfinder.allNodes[255];
+
+        pathfinder.CacluateHueristics();     
+
 
         function DrawGrid(){
 
@@ -51,6 +61,16 @@
 
             context.clearRect(0, 0, canvas.width, canvas.height);
 
+            DrawGrid();
+
+            if(!pathfinder.targetFound){
+              pathfinder.findPath();
+            }
+
+            if(!pathfinder.targetFound){
+              pathfinder.targetNode.fillStyle = 'red';
+              pathfinder.startNode.fillStyle = 'blue';
+            }
 
             requestAnimFrame(function() {
               animate(canvas, context, startTime);
