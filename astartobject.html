@@ -1,0 +1,65 @@
+<head>
+    
+    <script type="text/javascript" src="class.js"></script>
+    <script type="text/javascript" src="Node.js"></script>
+    <script type="text/javascript" src="pathfinder.js"></script>
+    
+    </head>
+    <body>
+      <canvas id="myCanvas" width="1050" height="600" style="border:1px solid #000099; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block; background-color:0099FF; "></canvas>
+      <script>
+
+            window.requestAnimFrame = (function(callback) {
+            return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+            function(callback) {
+              window.setTimeout(callback, 1000 / 60);
+            };
+          })();
+
+        var lastTime = Date.now();
+
+
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');
+
+        function DrawGrid(){
+
+          var FillStyle = 'Blue';
+
+          for (var i = 0; i < 42; i++) {
+            context.beginPath();
+            context.fillStyle = FillStyle;
+            context.moveTo(25*i,0);
+            context.lineTo(25*i,600);
+            context.stroke();
+            context.closePath();
+            };
+
+          for (var i = 0; i < 25; i++) {
+            context.beginPath();
+            context.fillStyle = FillStyle;
+            context.moveTo(0, 25 * i);
+            context.lineTo(1050, 25 * i);
+            context.stroke();
+            context.closePath();
+          };
+        }
+
+        function animate(canvas, context,startTime) {
+            var time = (new Date()).getTime() - startTime;
+            var currentTime = Date.now();
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+
+            requestAnimFrame(function() {
+              animate(canvas, context, startTime);
+            });
+        }
+
+        setTimeout(function() {
+            var startTime = (new Date()).getTime();
+            animate(canvas, context,startTime);
+          }, 1000);
+      </script>
+</body> 

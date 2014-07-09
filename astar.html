@@ -115,6 +115,7 @@
             if(targetFound){
               targetNode.fillStyle = 'red';
               targetNode.parentNode.fillStyle = 'white';
+              startNode.fillStyle = 'Blue';
               // traceBackPath();
             }
 
@@ -222,7 +223,7 @@
         function getSmallestFValueNode(){
           var returnNode = openList[0];
           var lowestFValue = openList[0].f;
-          
+
           for (var i = 0; i < openList.length; i++) {
             if(openList[i].f < lowestFValue){
               lowestFValue = openList[i].f;
