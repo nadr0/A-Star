@@ -17,6 +17,8 @@
 
         var lastTime = Date.now();
 
+        var debug = true;
+
         var canvas = document.getElementById('myCanvas');
         var context = canvas.getContext('2d');
 
@@ -59,7 +61,7 @@
         checkingNode = startNode;
         targetNode = allNodes[72];
 
-        findAllHueristicValues();
+        CacluateHueristics();
 
         function drawAllNodes(){
           for (var i = 0; i < canvas.height/sizeOfTile; i++) {
@@ -112,14 +114,20 @@
 
             if(targetFound){
               targetNode.fillStyle = 'red';
+              targetNode.parentNode.fillStyle = 'white';
               // traceBackPath();
             }
 
+
+            if(debug){
+              // drawToScreen();
+            }
 
             requestAnimFrame(function() {
               animate(canvas, context, startTime);
             });
         }
+
 
         function findPath(){
           if(!targetFound){
@@ -167,12 +175,12 @@
               if(newGCost < testingNode.g){
                 testingNode.parentNode = currentNode;
                 testingNode.g = newGCost;
-                testingNode.calculateTotalCost();
+                testingNode.calculateFValue();
               }
             }else{
               testingNode.parentNode = currentNode;
               testingNode.g = currentNode.g + moveCost;
-              testingNode.calculateTotalCost();
+              testingNode.calculateFValue();
               addToOpenList(testingNode);
             }
           }
@@ -212,23 +220,21 @@
         };
 
         function getSmallestFValueNode(){
-          var smallestNode = null;
-          var firstNode = openList[0];
-          var smallestFValue = firstNode.f;
+          var returnNode = openList[0];
+          var lowestFValue = openList[0].f;
+          
           for (var i = 0; i < openList.length; i++) {
-            if(openList[i].f < smallestFValue){
-              smallestFValue = openList[i].f;
-              smallestNode = openList[i];
-            }else{
-              smallestNode = firstNode;
+            if(openList[i].f < lowestFValue){
+              lowestFValue = openList[i].f;
+              returnNode = openList[i];
             }
           };
-          return smallestNode;
+          return returnNode;
         };
 
-        function findAllHueristicValues(){
+        function CacluateHueristics(){
           for (var i = 0; i < allNodes.length; i++) {
-            var hueristic = 10 * (Math.abs(allNodes[i].pos.x - targetNode.pos.x) + Math.abs(allNodes[i].pos.y - targetNode.pos.y));
+            var hueristic = 10 * (  Math.abs(allNodes[i].pos.x - targetNode.pos.x) + Math.abs(allNodes[i].pos.y - targetNode.pos.y)   );
             allNodes[i].h = hueristic;
           };
         };
@@ -253,6 +259,13 @@
           };
 
         };
+
+        function drawToScreen(){
+          context.fillStyle = 'black';
+          for (var i = 0; i < allNodes.length; i++) {
+            context.fillText(allNodes[i].h, allNodes[i].pos.x, allNodes[i].pos.y + allNodes[i].height/2);
+          };
+        }
 
         setTimeout(function() {
             var startTime = (new Date()).getTime();

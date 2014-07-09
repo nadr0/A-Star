@@ -20,7 +20,7 @@ var Node = Class.extend({
 
         this.parentNode = null;
     },
-    calculateTotalCost: function(){
+    calculateFValue: function(){
         this.f = this.h + this.g;
     },
     Render: function(){
