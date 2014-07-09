@@ -1,12 +1,13 @@
 <head>
+    
     <script type="text/javascript" src="class.js"></script>
-    <script type="text/javascript" src="node.js"></script>
-
+    <script type="text/javascript" src="Node.js"></script>
+    
     </head>
     <body>
-      <canvas id="myCanvas" width="1280" height="640" style="border:1px solid #000000; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block; background-color:white; "></canvas>
-
+      <canvas id="myCanvas" width="1050" height="600" style="border:1px solid #000099; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block; background-color:0099FF; "></canvas>
       <script>
+
             window.requestAnimFrame = (function(callback) {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
             function(callback) {
@@ -14,109 +15,243 @@
             };
           })();
 
+        var lastTime = Date.now();
+
         var canvas = document.getElementById('myCanvas');
         var context = canvas.getContext('2d');
 
-        // The starting node
-        var startnode = null;
-        // The target node
-        var targetnode = null;
+        var openList = [];
+        var closedList = [];
+        var finalPath = [];
 
-        // Turn debug off/on
-        var debug = true;
+        var checkingNode = null;
+        var startNode = null;
+        var targetNode = null;
+        var moveCost = 10;
+        var targetFound = false;
+        var sizeOfTile = 25;
+        var allNodes = [];
+        var data = new Array(canvas.height/sizeOfTile);
+        var counter = 0;
 
-        //Node size
-        var nodesize = 16;
+        function fillAllNodes(){
 
-        // Array for the nodes
-        var data = [];
-        // Populates the array with the nodes
-        for (var i = 0; i < canvas.height/nodesize; i++) {
-            for (var j = 0; j < canvas.width/nodesize; j++) {
-              data.push( new node(j * nodesize, i * nodesize));
+          for (var i = 0; i < canvas.height/sizeOfTile; i++) {
+            for (var j = 0; j < canvas.width/sizeOfTile; j++) { 
+              data[i] = new Array(canvas.width/sizeOfTile);
             };
-        };
-
-        function drawnodes() {
-          // Draws all the nodes
-          for (var i = 0; i < data.length; i++) {
-            data[i].draw();
           };
+
+
+          for (var i = 0; i < canvas.height/sizeOfTile; i++) {
+            for (var j = 0; j < canvas.width/sizeOfTile; j++) {
+              data[i][j] = new Node(j*25, i*25);
+              allNodes.push(data[i][j]);
+            };
+          };
+
         };
 
-        function drawgrid() {
-          // Draws the grid to see each tile
-          for (var i = 0; i < (canvas.width/this.nodesize); i++) {
+        fillAllNodes();
+        findAdjacentNodes();
+
+        startNode = allNodes[560];
+        checkingNode = startNode;
+        targetNode = allNodes[72];
+
+        findAllHueristicValues();
+
+        function drawAllNodes(){
+          for (var i = 0; i < canvas.height/sizeOfTile; i++) {
+            for (var j = 0; j < canvas.width/sizeOfTile; j++) {
+              data[i][j].Update();
+            };
+          };
+
+        };
+
+
+        function DrawGrid(){
+
+          var FillStyle = 'Blue';
+
+          for (var i = 0; i < 42; i++) {
             context.beginPath();
-            context.strokeStyle = 'black';
-            context.moveTo(this.nodesize*i, 0);
-            context.lineTo(this.nodesize*i, canvas.width);
+            context.fillStyle = FillStyle;
+            context.moveTo(25*i,0);
+            context.lineTo(25*i,600);
+            context.stroke();
+            context.closePath();
+            };
+
+          for (var i = 0; i < 25; i++) {
+            context.beginPath();
+            context.fillStyle = FillStyle;
+            context.moveTo(0, 25 * i);
+            context.lineTo(1050, 25 * i);
             context.stroke();
             context.closePath();
           };
-          for (var i = 0; i < (canvas.height/this.nodesize); i++) {
-            context.beginPath();
-            context.strokeStyle = 'black';
-            context.moveTo(0, this.nodesize*i);
-            context.lineTo(canvas.width, this.nodesize*i);
-            context.stroke();
-            context.closePath();
-          };
-        };
-        
-        function findadjacentnodes(){
-          // Finds all the adjacentnodes for every node
-
-          for (var i = 0; i < this.data.length; i++) {
-            for (var w = 0; w < this.data.length; w++) {
-              if(this.data[i].posX + (this.nodesize) === this.data[w].posX && this.data[i].posY === this.data[w].posY){
-                this.data[i].eastnode = this.data[w];
-              };
-              if(this.data[i].posX - (this.nodesize) === this.data[w].posX && this.data[i].posY === this.data[w].posY){
-                this.data[i].westnode = this.data[w];
-              };
-              if(this.data[i].posX === this.data[w].posX && this.data[i].posY + this.nodesize === this.data[w].posY){
-                this.data[i].southnode = this.data[w];
-              };
-              if(this.data[i].posX === this.data[w].posX && this.data[i].posY - this.nodesize === this.data[w].posY){
-                this.data[i].northnode = this.data[w];
-              };
-            };
-          };
-        };
-
-        findadjacentnodes();
-
-        function TESTADJACENTNODES() {
-          // Debug test to see if the adjacent nodes work
-          var node = data[72];
-          if(node.northnode != null){
-            node.northnode.color = 'blue';
-          };
-          if(node.southnode != null){
-            node.southnode.color = 'blue';
-          };
-          if(node.westnode != null){
-            node.westnode.color = 'blue';
-          };
-          if(node.eastnode != null){
-            node.eastnode.color = 'blue';
-          };
-        };
+        }
 
         function animate(canvas, context,startTime) {
-          var time = (new Date()).getTime() - startTime;
-          var currentTime = Date.now();
+            var time = (new Date()).getTime() - startTime;
+            var currentTime = Date.now();
 
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          drawnodes();
-          drawgrid(); 
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            // UPDATE STARTS
 
-          // if(debug){TESTADJACENTNODES();};
+            drawAllNodes();
 
-          requestAnimFrame(function() {
-            animate(canvas, context, startTime);
-          });
+            // Draws the grids for the nodes
+            DrawGrid();
+
+            if(!targetFound){
+              findPath();
+            }
+
+            if(targetFound){
+              targetNode.fillStyle = 'red';
+              // traceBackPath();
+            }
+
+
+            requestAnimFrame(function() {
+              animate(canvas, context, startTime);
+            });
+        }
+
+        function findPath(){
+          if(!targetFound){
+            if(checkingNode.northNode){
+              adjacentNode(checkingNode, checkingNode.northNode);
+            }
+
+            if(checkingNode.southNode){
+              adjacentNode(checkingNode, checkingNode.southNode);
+            }
+
+            if(checkingNode.westNode){
+              adjacentNode(checkingNode, checkingNode.westNode);
+            }
+
+            if(checkingNode.eastNode){
+              adjacentNode(checkingNode, checkingNode.eastNode);
+            }
+          }
+
+          if(!targetFound){
+            addToCloseList(checkingNode);
+            removeFromOpenList(checkingNode);
+
+            checkingNode = getSmallestFValueNode();
+          }
+
+
+        };
+
+        function adjacentNode(currentNode, testingNode){
+          if(!testingNode){
+            return;
+          }
+
+          if(testingNode === targetNode){
+            targetNode.parentNode = currentNode;
+            targetFound = true;
+            return;
+          }
+
+          if(!checkClosedList(testingNode)){
+            if(checkOpenList(testingNode)){
+              var newGCost = currentNode.g + moveCost;
+              if(newGCost < testingNode.g){
+                testingNode.parentNode = currentNode;
+                testingNode.g = newGCost;
+                testingNode.calculateTotalCost();
+              }
+            }else{
+              testingNode.parentNode = currentNode;
+              testingNode.g = currentNode.g + moveCost;
+              testingNode.calculateTotalCost();
+              addToOpenList(testingNode);
+            }
+          }
+
+        };
+             
+        function checkClosedList(testing){
+          for (var i = 0; i < closedList.length; i++) {
+            if(testing === closedList[i]){
+              return true;
+            }
+          };
+          return false;
+        };
+
+        function checkOpenList(testing){
+          for (var i = 0; i < openList.length; i++) {
+            if(testing === openList[i]){
+              return true;
+            }
+          };
+          return false;
+        };
+
+        function addToOpenList(node){
+          openList.push(node);
+        };
+
+        function addToCloseList(node){
+          node.fillStyle = 'Cyan';
+          closedList.push(node)
+        };
+
+        function removeFromOpenList(node){
+          var index = openList.indexOf(node);
+          openList.splice(index, 1);
+        };
+
+        function getSmallestFValueNode(){
+          var smallestNode = null;
+          var firstNode = openList[0];
+          var smallestFValue = firstNode.f;
+          for (var i = 0; i < openList.length; i++) {
+            if(openList[i].f < smallestFValue){
+              smallestFValue = openList[i].f;
+              smallestNode = openList[i];
+            }else{
+              smallestNode = firstNode;
+            }
+          };
+          return smallestNode;
+        };
+
+        function findAllHueristicValues(){
+          for (var i = 0; i < allNodes.length; i++) {
+            var hueristic = 10 * (Math.abs(allNodes[i].pos.x - targetNode.pos.x) + Math.abs(allNodes[i].pos.y - targetNode.pos.y));
+            allNodes[i].h = hueristic;
+          };
+        };
+
+        function findAdjacentNodes(){
+
+          for (var i = 0; i < allNodes.length; i++) {
+              for (var w = 0; w < allNodes.length; w++) {
+                  if(allNodes[i].pos.x + (sizeOfTile) === allNodes[w].pos.x && allNodes[i].pos.y === allNodes[w].pos.y){
+                     allNodes[i].eastNode = allNodes[w];
+                  }
+                  if(allNodes[i].pos.x - (sizeOfTile) === allNodes[w].pos.x && allNodes[i].pos.y === allNodes[w].pos.y){
+                      allNodes[i].westNode = allNodes[w];
+                  }
+                  if(allNodes[i].pos.x === allNodes[w].pos.x && allNodes[i].pos.y + sizeOfTile === allNodes[w].pos.y){
+                      allNodes[i].southNode = allNodes[w];
+                  }
+                  if(allNodes[i].pos.x === allNodes[w].pos.x && allNodes[i].pos.y - sizeOfTile === allNodes[w].pos.y){
+                      allNodes[i].northNode = allNodes[w];
+                  }
+              };
+          };
+
         };
 
         setTimeout(function() {
@@ -124,4 +259,4 @@
             animate(canvas, context,startTime);
           }, 1000);
       </script>
-</body>
+</body> 
