@@ -140,15 +140,18 @@ var Pathfinder = Class.extend({
     },
     addToOpenList: function(node){
         this.openList.push(node);
-        node.fillStyle = 'lightcyan';
+        // node.fillStyle = 'lightcyan';
+        node.open = true;
         this.openList.sort(function(a, b) {return a.f - b.f})
     },
     addToCloseList: function(node){
-        node.fillStyle = 'lightblue';
+        // node.fillStyle = 'lightblue';
+        node.closed = true;
         this.closedList.push(node)
     },
     removeFromOpenList: function(node){
         var index = this.openList.indexOf(node);
+        node.open = false;
         this.openList.splice(index, 1);
     },
     getSmallestFValueNode: function(){
@@ -182,7 +185,9 @@ var Pathfinder = Class.extend({
     tracePathBack: function(){
         var node = this.targetNode;
         do{
-            node.fillStyle = 'lightsalmon';
+            node.open = false;
+            node.closed = false;
+            node.final = true;
             this.finalPath.push(node);
             node = node.parentNode;
         }while(node !== null);

@@ -24,25 +24,24 @@
 
           var seek = true;
 
-          var choose = false;
-
-          var states = {pickingWalls: true, pickingStartNode: false, pickingTargetNode: false};
+          var states = {pickingWalls: 'pickingWalls', pickingStartNode: 'pickingStartNode', pickingTargetNode: 'pickingTargetNode', findPath: 'findPath'};
+          var currentState = states.pickingWalls;
 
           var pathfinder = new Pathfinder();
 
+          var startPathFinding = false;
+
+          var isStartNodeCreated = false;
+          var isTargetNodeCreated = false;
+
+
           pathfinder.fillNodeArrays();       
           pathfinder.findAdjacentNodes();
-
-          pathfinder.startNode = pathfinder.allNodes[0];
-          pathfinder.checkingNode = pathfinder.startNode;
-          pathfinder.targetNode = pathfinder.allNodes[255];
-
-          pathfinder.CacluateHueristics();     
+ 
 
           pathfinder.drawNodes();
 
           function DrawGrid(){
-
 
             for (var i = 0; i < 42; i++) {
               context.beginPath();
@@ -74,17 +73,16 @@
               pathfinder.drawNodes();
               DrawGrid();
 
-              if(!pathfinder.targetFound){
-                  pathfinder.findPath();
-              }
+              if(startPathFinding){
+                if(!pathfinder.targetFound){
+                    pathfinder.findPath();
+                }
 
-              if(pathfinder.targetFound && seek){
-                pathfinder.tracePathBack();
-                seek = false;
+                if(pathfinder.targetFound && seek){
+                  pathfinder.tracePathBack();
+                  seek = false;
+                }
               }
-
-              pathfinder.startNode.fillStyle = 'lightgreen';
-              pathfinder.targetNode.fillStyle = 'lightcoral';
               
               requestAnimFrame(function() {
                 animate(canvas, context, startTime);
@@ -109,12 +107,52 @@
           document.onmousedown = function(event){
             //if(event.keyCode == '65'){PlayerOne.LeftBool = true;}
             for (var i = 0; i < pathfinder.allNodes.length; i++) {
-              if(event && pathfinder.allNodes[i].hovering && !pathfinder.allNodes[i].isWall){
-                pathfinder.allNodes[i].isWall = true;
-              }else if(event && pathfinder.allNodes[i].hovering && pathfinder.allNodes[i].isWall){
-                pathfinder.allNodes[i].isWall = false;
+
+              if(currentState === states.pickingWalls){
+                if(event && pathfinder.allNodes[i].hovering && !pathfinder.allNodes[i].isWall){
+                  pathfinder.allNodes[i].isWall = true;
+                }else if(event && pathfinder.allNodes[i].hovering && pathfinder.allNodes[i].isWall){
+                  pathfinder.allNodes[i].isWall = false;
+                }
+              }else if(currentState === states.pickingStartNode){
+                if(event && pathfinder.allNodes[i].hovering && !pathfinder.allNodes[i].startNode && !isStartNodeCreated && !pathfinder.allNodes[i].isWall){
+                  pathfinder.allNodes[i].startNode = true;
+                  pathfinder.startNode = pathfinder.allNodes[i];
+                  pathfinder.checkingNode = pathfinder.startNode;
+                  isStartNodeCreated = true;
+                }else if(event && pathfinder.allNodes[i].hovering && pathfinder.allNodes[i].startNode){
+                  pathfinder.allNodes[i].startNode = false;
+                  pathfinder.startNode = null;
+                  pathfinder.checkingNode = null;
+                  isStartNodeCreated = false;
+                }
+              }else if(currentState === states.pickingTargetNode){
+                if(event && pathfinder.allNodes[i].hovering && !pathfinder.allNodes[i].targetNode && !isTargetNodeCreated && !pathfinder.allNodes[i].isWall && !pathfinder.allNodes[i].startNode){
+                  pathfinder.allNodes[i].targetNode = true;
+                  pathfinder.targetNode = pathfinder.allNodes[i];
+                  isTargetNodeCreated = true;
+                }else if(event && pathfinder.allNodes[i].hovering && pathfinder.allNodes[i].targetNode){
+                  pathfinder.allNodes[i].targetNode = false;
+                  pathfinder.targetNode = null;
+                  isTargetNodeCreated = false;
+                }
               }
+
             };
+          }
+
+          document.onkeydown = function(event){
+            if(event.keyCode == '13'){
+              if(currentState === states.pickingWalls){
+                currentState = states.pickingStartNode;
+              }else if(currentState === states.pickingStartNode){
+                currentState = states.pickingTargetNode;
+              }else if(currentState === states.pickingTargetNode){
+                currentState = states.findPath;
+                pathfinder.CacluateHueristics();
+                startPathFinding = true;
+              }
+            }
           }
 
         setTimeout(function() {

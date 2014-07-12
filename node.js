@@ -22,13 +22,37 @@ var Node = Class.extend({
 
         this.hovering = false;
 
+        this.open = false;
+        this.closed = false;
+        this.final = false;
+
         this.isWall = false;
+        this.startNode = false;
+        this.targetNode = false;
         this.hover();
     },
     calculateFValue: function(){
         this.f = this.h + this.g;
     },
     Render: function(){
+      
+        if(this.isWall){
+            this.fillStyle = 'rgba(119,136,153,1)';
+        }else if(this.startNode){
+            this.fillStyle = 'lightgreen';
+        }else if(this.targetNode){
+            this.fillStyle = 'lightcoral';
+        }else if(this.open){
+            this.fillStyle = 'lightcyan';
+        }else if(this.closed){
+            this.fillStyle = 'lightblue';
+        }else if(this.final){
+            this.fillStyle = 'lightsalmon';
+        }
+        else if(!this.hovering){
+            this.fillStyle = 'lightgoldenrodyellow';
+        }
+
         context.beginPath();
         context.fillStyle = this.fillStyle;
         context.rect(this.pos.x, this.pos.y, this.width, this.height);
@@ -36,23 +60,31 @@ var Node = Class.extend({
         context.closePath();
     },
     hover: function(){
-        
-        if(states.pickingWalls && this.hovering){
-            this.fillStyle = 'rgba(119,136,153,0.5)';
-        }else if(this.isWall){
-            this.fillStyle = 'rgba(119,136,153,1.0)';
-        }else {
-            this.fillStyle = 'lightgoldenrodyellow';
-        }
-
         if(mousePos.x > this.pos.x && mousePos.x < this.pos.x + this.width && mousePos.y > this.pos.y  && mousePos.y < this.pos.y + this.height){
             this.hovering = true;
         }else{
             this.hovering = false;
         }
+
+        if(currentState === states.pickingWalls && this.hovering){
+            this.fillStyle = 'rgba(119,136,153,0.5)';
+        }else if(currentState === states.pickingStartNode && this.hovering){
+            this.fillStyle = 'lightgreen';
+        }else if(currentState === states.pickingTargetNode && this.hovering){
+            this.fillStyle = 'lightcoral';
+        }
+        else{
+            this.fillStyle = 'lightgoldenrodyellow';
+        }
+
     },
     update : function(){ 
+        if(currentState !== states.findPath){
+            this.hover();
+        }else{
+            this.hovering = false;
+        }
+
         this.Render();
-        this.hover();
     }
 });
