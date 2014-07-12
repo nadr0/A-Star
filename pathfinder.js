@@ -20,7 +20,7 @@ var Pathfinder = Class.extend({
 
         // The movement cost to go from one tile to another - Manhattan Distance
         // Can only move Up/Down/Left/Right
-        this.moveCost = 10;
+        this.moveCost = 100;
 
         // Bool to keep track if the target is found
         this.targetFound = false;
@@ -37,28 +37,18 @@ var Pathfinder = Class.extend({
     },
     fillNodeArrays: function(){
 
-        // creates the data array to store all the nodes
-        for (var i = 0; i < canvas.height/this.sizeOfTile; i++) {
-            for (var j = 0; j < canvas.width/this.sizeOfTile; j++) { 
-                this.data[i] = new Array(canvas.width/this.sizeOfTile);
-            };
-        };
-
         // Fills the dataArray with nodes and fills the allNodes with the nodes too
         for (var i = 0; i < canvas.height/this.sizeOfTile; i++) {
             for (var j = 0; j < canvas.width/this.sizeOfTile; j++) {
-                this.data[i][j] = new Node(j*25, i*25);
-                this.allNodes.push(this.data[i][j]);
+                this.allNodes.push(new Node(j * 25, i * 25));
             };
         };
 
     },
     drawNodes: function (){
         // Draws all the nodes in the data array
-        for (var i = 0; i < canvas.height/this.sizeOfTile; i++) {
-            for (var j = 0; j < canvas.width/this.sizeOfTile; j++) {
-                this.data[i][j].Update();
-            };
+        for (var i = 0; i < this.allNodes.length; i++) {
+            this.allNodes[i].update();
         };
     },
     findPath: function(){
@@ -97,6 +87,10 @@ var Pathfinder = Class.extend({
     adjacentNode: function(currentNode, testingNode){
         // If the testingNode is null the return out
         if(!testingNode){
+            return;
+        }
+
+        if(testingNode.isWall){
             return;
         }
 
@@ -146,9 +140,11 @@ var Pathfinder = Class.extend({
     },
     addToOpenList: function(node){
         this.openList.push(node);
+        node.fillStyle = 'lightcyan';
+        this.openList.sort(function(a, b) {return a.f - b.f})
     },
     addToCloseList: function(node){
-        node.fillStyle = 'Cyan';
+        node.fillStyle = 'lightblue';
         this.closedList.push(node)
     },
     removeFromOpenList: function(node){
@@ -156,16 +152,7 @@ var Pathfinder = Class.extend({
         this.openList.splice(index, 1);
     },
     getSmallestFValueNode: function(){
-        var returnNode = this.openList[0];
-        var lowestFValue = this.openList[0].f;
-
-        for (var i = 0; i < this.openList.length; i++) {
-            if(this.openList[i].f < lowestFValue){
-                lowestFValue = this.openList[i].f;
-                returnNode = this.openList[i];
-            }
-        };
-        return returnNode;
+        return this.openList[0];
     },
     CacluateHueristics: function(){
         for (var i = 0; i < this.allNodes.length; i++) {
@@ -174,7 +161,6 @@ var Pathfinder = Class.extend({
         };
     },
     findAdjacentNodes: function(){
-
         for (var i = 0; i < this.allNodes.length; i++) {
             for (var w = 0; w < this.allNodes.length; w++) {
                 if(this.allNodes[i].pos.x + (this.sizeOfTile) === this.allNodes[w].pos.x && this.allNodes[i].pos.y === this.allNodes[w].pos.y){
@@ -192,14 +178,15 @@ var Pathfinder = Class.extend({
             };
         };
 
-    },        
-    drawAllNodes: function(){
-        for (var i = 0; i < canvas.height/this.sizeOfTile; i++) {
-            for (var j = 0; j < canvas.width/this.sizeOfTile; j++) {
-                this.data[i][j].Update();
-            };
-        };
-    },
+    },   
+    tracePathBack: function(){
+        var node = this.targetNode;
+        do{
+            node.fillStyle = 'lightsalmon';
+            this.finalPath.push(node);
+            node = node.parentNode;
+        }while(node !== null);
+    }
 
 
 });

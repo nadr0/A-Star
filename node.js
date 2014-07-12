@@ -3,7 +3,7 @@ var Node = Class.extend({
     init: function(X,Y){
         this.pos = {x: null, y: null};
 
-        this.fillStyle = 'yellow';
+        this.fillStyle = 'lightgoldenrodyellow';
         this.width = 25;
         this.height = 25;
 
@@ -19,6 +19,11 @@ var Node = Class.extend({
         this.eastNode = null;
 
         this.parentNode = null;
+
+        this.hovering = false;
+
+        this.isWall = false;
+        this.hover();
     },
     calculateFValue: function(){
         this.f = this.h + this.g;
@@ -30,7 +35,24 @@ var Node = Class.extend({
         context.fill();
         context.closePath();
     },
-    Update : function(){ 
+    hover: function(){
+        
+        if(states.pickingWalls && this.hovering){
+            this.fillStyle = 'rgba(119,136,153,0.5)';
+        }else if(this.isWall){
+            this.fillStyle = 'rgba(119,136,153,1.0)';
+        }else {
+            this.fillStyle = 'lightgoldenrodyellow';
+        }
+
+        if(mousePos.x > this.pos.x && mousePos.x < this.pos.x + this.width && mousePos.y > this.pos.y  && mousePos.y < this.pos.y + this.height){
+            this.hovering = true;
+        }else{
+            this.hovering = false;
+        }
+    },
+    update : function(){ 
         this.Render();
+        this.hover();
     }
 });

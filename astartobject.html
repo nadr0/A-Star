@@ -6,7 +6,7 @@
     
     </head>
     <body>
-      <canvas id="myCanvas" width="1050" height="600" style="border:1px solid #000099; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block; background-color:0099FF; "></canvas>
+      <canvas id="myCanvas" width="1050" height="600" style="border:1px solid #000099; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block;  "></canvas>
       <script>
 
             window.requestAnimFrame = (function(callback) {
@@ -16,67 +16,104 @@
             };
           })();
 
-        var canvas = document.getElementById('myCanvas');
-        var context = canvas.getContext('2d');
-        var lastTime = Date.now();
+          var canvas = document.getElementById('myCanvas');
+          var context = canvas.getContext('2d');
+          var lastTime = Date.now();
 
-        var pathfinder = new Pathfinder();
+          var mousePos = {x: null, y: null};
 
-        pathfinder.fillNodeArrays();       
-        pathfinder.findAdjacentNodes();
+          var seek = true;
 
-        pathfinder.startNode = pathfinder.allNodes[0];
-        pathfinder.checkingNode = pathfinder.startNode;
-        pathfinder.targetNode = pathfinder.allNodes[255];
+          var choose = false;
 
-        pathfinder.CacluateHueristics();     
+          var states = {pickingWalls: true, pickingStartNode: false, pickingTargetNode: false};
+
+          var pathfinder = new Pathfinder();
+
+          pathfinder.fillNodeArrays();       
+          pathfinder.findAdjacentNodes();
+
+          pathfinder.startNode = pathfinder.allNodes[0];
+          pathfinder.checkingNode = pathfinder.startNode;
+          pathfinder.targetNode = pathfinder.allNodes[255];
+
+          pathfinder.CacluateHueristics();     
+
+          pathfinder.drawNodes();
+
+          function DrawGrid(){
 
 
-        function DrawGrid(){
+            for (var i = 0; i < 42; i++) {
+              context.beginPath();
+              context.fillStyle = 'black';  
+              context.moveTo(25*i,0);
+              context.lineTo(25*i,600);
+              context.stroke();
+              context.closePath();
+              };
 
-          var FillStyle = 'Blue';
-
-          for (var i = 0; i < 42; i++) {
-            context.beginPath();
-            context.fillStyle = FillStyle;
-            context.moveTo(25*i,0);
-            context.lineTo(25*i,600);
-            context.stroke();
-            context.closePath();
+            for (var i = 0; i < 25; i++) {
+              context.beginPath();
+              context.fillStyle = 'black';
+              context.moveTo(0, 25 * i);
+              context.lineTo(1050, 25 * i);
+              context.stroke();
+              context.closePath();
             };
+          }
 
-          for (var i = 0; i < 25; i++) {
-            context.beginPath();
-            context.fillStyle = FillStyle;
-            context.moveTo(0, 25 * i);
-            context.lineTo(1050, 25 * i);
-            context.stroke();
-            context.closePath();
-          };
-        }
+          DrawGrid();
 
-        function animate(canvas, context,startTime) {
-            var time = (new Date()).getTime() - startTime;
-            var currentTime = Date.now();
+          function animate(canvas, context,startTime) {
+              var time = (new Date()).getTime() - startTime;
+              var currentTime = Date.now();
 
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            
-            pathfinder.drawAllNodes();
-            DrawGrid();
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              
+              pathfinder.drawNodes();
+              DrawGrid();
 
-            if(!pathfinder.targetFound){
-                pathfinder.findPath();
-            }
+              if(!pathfinder.targetFound){
+                  pathfinder.findPath();
+              }
 
-            if(!pathfinder.targetFound){
-              pathfinder.targetNode.fillStyle = 'red';
-              pathfinder.startNode.fillStyle = 'blue';
-            }
+              if(pathfinder.targetFound && seek){
+                pathfinder.tracePathBack();
+                seek = false;
+              }
 
-            requestAnimFrame(function() {
-              animate(canvas, context, startTime);
-            });
-        }
+              pathfinder.startNode.fillStyle = 'lightgreen';
+              pathfinder.targetNode.fillStyle = 'lightcoral';
+              
+              requestAnimFrame(function() {
+                animate(canvas, context, startTime);
+              });
+          }
+
+          function getMousePos(canvas, evt) {
+              var rect = canvas.getBoundingClientRect();
+              return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+              };
+          }
+
+          canvas.addEventListener('mousemove', function(evt) {
+                var mousepos = getMousePos(canvas, evt);
+                mousePos.x = mousepos.x;
+                mousePos.y = mousepos.y;
+            }, false);
+
+
+          document.onmousedown = function(event){
+            //if(event.keyCode == '65'){PlayerOne.LeftBool = true;}
+            for (var i = 0; i < pathfinder.allNodes.length; i++) {
+              if(event && pathfinder.allNodes[i].hovering){
+                pathfinder.allNodes[i].isWall = true;
+              }
+            };
+          }
 
         setTimeout(function() {
             var startTime = (new Date()).getTime();
