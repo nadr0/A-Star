@@ -109,8 +109,10 @@
           document.onmousedown = function(event){
             //if(event.keyCode == '65'){PlayerOne.LeftBool = true;}
             for (var i = 0; i < pathfinder.allNodes.length; i++) {
-              if(event && pathfinder.allNodes[i].hovering){
+              if(event && pathfinder.allNodes[i].hovering && !pathfinder.allNodes[i].isWall){
                 pathfinder.allNodes[i].isWall = true;
+              }else if(event && pathfinder.allNodes[i].hovering && pathfinder.allNodes[i].isWall){
+                pathfinder.allNodes[i].isWall = false;
               }
             };
           }
