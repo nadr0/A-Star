@@ -43,9 +43,9 @@ var Node = Class.extend({
         }else if(this.targetNode){
             this.fillStyle = 'lightcoral';
         }else if(this.open){
-            this.fillStyle = 'cyan';
-        }else if(this.closed){
             this.fillStyle = 'lightblue';
+        }else if(this.closed){
+            this.fillStyle = 'lightskyblue';
         }else if(this.final){
             this.fillStyle = 'lightsalmon';
         }

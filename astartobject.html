@@ -70,8 +70,18 @@
               var time = (new Date()).getTime() - startTime;
               var currentTime = Date.now();
 
+              var text = '';
+
               context.clearRect(0, 0, canvas.width, canvas.height);
               
+              if(currentState === states.pickingWalls){
+                text = 'Place Walls';
+              }else if(currentState === states.pickingStartNode){
+                text = 'Place Start Node';
+              }else if(currentState === states.pickingTargetNode){
+                text = 'Place Target Node';
+              }
+
               pathfinder.drawNodes();
               DrawGrid();
 
@@ -86,6 +96,12 @@
                 }
               }
               
+              context.fillStyle = 'rgba(0,0,0,0.75)';
+              context.font = '50px arial';
+              var lengthOfText = context.measureText(text).width;
+              var textPosX =  ((canvas.width - lengthOfText)/2);
+              context.fillText(text, textPosX, 100)
+
               requestAnimFrame(function() {
                 animate(canvas, context, startTime);
               });
