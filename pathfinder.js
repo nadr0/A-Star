@@ -91,6 +91,7 @@ var Pathfinder = Class.extend({
         }
 
         if(testingNode.isWall){
+            console.log('hi');
             return;
         }
 
@@ -140,12 +141,10 @@ var Pathfinder = Class.extend({
     },
     addToOpenList: function(node){
         this.openList.push(node);
-        // node.fillStyle = 'lightcyan';
         node.open = true;
         this.openList.sort(function(a, b) {return a.f - b.f})
     },
     addToCloseList: function(node){
-        // node.fillStyle = 'lightblue';
         node.closed = true;
         this.closedList.push(node)
     },
