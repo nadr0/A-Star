@@ -26,7 +26,7 @@ var Pathfinder = Class.extend({
         this.targetFound = false;
 
         // Size of the tiles in the datamap
-        this.sizeOfTile = 25;
+        this.sizeOfTile = 32;
 
         // Contains all the nodes
         this.allNodes = [];
@@ -40,7 +40,7 @@ var Pathfinder = Class.extend({
         // Fills the dataArray with nodes and fills the allNodes with the nodes too
         for (var i = 0; i < canvas.height/this.sizeOfTile; i++) {
             for (var j = 0; j < canvas.width/this.sizeOfTile; j++) {
-                this.allNodes.push(new Node(j * 25, i * 25));
+                this.allNodes.push(new Node(j * this.sizeOfTile, i * this.sizeOfTile));
             };
         };
 

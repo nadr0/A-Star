@@ -6,7 +6,7 @@
     
     </head>
     <body>
-      <canvas id="myCanvas" width="1050" height="600" style="border:1px solid #000099; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block;  "></canvas>
+      <canvas id="myCanvas" width="1920" height="960" style="border:1px solid #000000; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block;  "></canvas>
       <script>
 
             window.requestAnimFrame = (function(callback) {
@@ -31,6 +31,8 @@
 
           var startPathFinding = false;
 
+          var tilesize = 32;
+
           var isStartNodeCreated = false;
           var isTargetNodeCreated = false;
 
@@ -43,20 +45,20 @@
 
           function DrawGrid(){
 
-            for (var i = 0; i < 42; i++) {
+            for (var i = 0; i < canvas.width/tilesize; i++) {
               context.beginPath();
               context.fillStyle = 'black';  
-              context.moveTo(25*i,0);
-              context.lineTo(25*i,600);
+              context.moveTo(tilesize*i,0);
+              context.lineTo(tilesize*i, canvas.height);
               context.stroke();
               context.closePath();
               };
 
-            for (var i = 0; i < 25; i++) {
+            for (var i = 0; i < canvas.width/tilesize; i++) {
               context.beginPath();
               context.fillStyle = 'black';
-              context.moveTo(0, 25 * i);
-              context.lineTo(1050, 25 * i);
+              context.moveTo(0, tilesize * i);
+              context.lineTo(canvas.width, tilesize * i);
               context.stroke();
               context.closePath();
             };
@@ -106,39 +108,58 @@
 
           document.onmousedown = function(event){
             //if(event.keyCode == '65'){PlayerOne.LeftBool = true;}
-            for (var i = 0; i < pathfinder.allNodes.length; i++) {
-
               if(currentState === states.pickingWalls){
-                if(event && pathfinder.allNodes[i].hovering && !pathfinder.allNodes[i].isWall){
-                  pathfinder.allNodes[i].isWall = true;
-                }else if(event && pathfinder.allNodes[i].hovering && pathfinder.allNodes[i].isWall){
-                  pathfinder.allNodes[i].isWall = false;
-                }
-              }else if(currentState === states.pickingStartNode){
-                if(event && pathfinder.allNodes[i].hovering && !pathfinder.allNodes[i].startNode && !isStartNodeCreated && !pathfinder.allNodes[i].isWall){
-                  pathfinder.allNodes[i].startNode = true;
-                  pathfinder.startNode = pathfinder.allNodes[i];
-                  pathfinder.checkingNode = pathfinder.startNode;
-                  isStartNodeCreated = true;
-                }else if(event && pathfinder.allNodes[i].hovering && pathfinder.allNodes[i].startNode){
-                  pathfinder.allNodes[i].startNode = false;
-                  pathfinder.startNode = null;
-                  pathfinder.checkingNode = null;
-                  isStartNodeCreated = false;
-                }
-              }else if(currentState === states.pickingTargetNode){
-                if(event && pathfinder.allNodes[i].hovering && !pathfinder.allNodes[i].targetNode && !isTargetNodeCreated && !pathfinder.allNodes[i].isWall && !pathfinder.allNodes[i].startNode){
-                  pathfinder.allNodes[i].targetNode = true;
-                  pathfinder.targetNode = pathfinder.allNodes[i];
-                  isTargetNodeCreated = true;
-                }else if(event && pathfinder.allNodes[i].hovering && pathfinder.allNodes[i].targetNode){
-                  pathfinder.allNodes[i].targetNode = false;
-                  pathfinder.targetNode = null;
-                  isTargetNodeCreated = false;
+                if(event){
+                  for (var i = 0; i < pathfinder.allNodes.length; i++) {
+                    if(pathfinder.allNodes[i].checkBounds()){
+                      if(!pathfinder.allNodes[i].isWall){
+                        pathfinder.allNodes[i].isWall = true;
+                      }else if(pathfinder.allNodes[i].isWall){
+                        pathfinder.allNodes[i].isWall = false;
+                      }
+                    }
+                  };
                 }
               }
+              else if(currentState === states.pickingStartNode){
+                if(event){
+                  for (var i = 0; i < pathfinder.allNodes.length; i++) {
+                    if(pathfinder.allNodes[i].checkBounds()){
+                      if(!pathfinder.allNodes[i].startNode && !isStartNodeCreated && !pathfinder.allNodes[i].isWall){
+                        pathfinder.allNodes[i].startNode = true;
+                        pathfinder.startNode = pathfinder.allNodes[i];
+                        pathfinder.checkingNode = pathfinder.startNode;
+                        isStartNodeCreated = true;
+                      }else if(pathfinder.allNodes[i].startNode){
+                        pathfinder.allNodes[i].startNode = false;
+                        pathfinder.startNode = null;
+                        pathfinder.checkingNode = null;
+                        isStartNodeCreated = false;
+                      }
+                    }
+                  }
+                };
+              }
+            else if(currentState === states.pickingTargetNode){
+              if(event){
+                for (var i = 0; i < pathfinder.allNodes.length; i++) {
+                  if(pathfinder.allNodes[i].checkBounds()){
+                    if(!pathfinder.allNodes[i].targetNode && !isTargetNodeCreated && !pathfinder.allNodes[i].isWall && !pathfinder.allNodes[i].startNode){
+                      pathfinder.allNodes[i].targetNode = true;
+                      pathfinder.targetNode = pathfinder.allNodes[i];
+                      isTargetNodeCreated = true;
+                    }else if(pathfinder.allNodes[i].targetNode){
+                      pathfinder.allNodes[i].targetNode = false;
+                      pathfinder.targetNode = null;
+                      isTargetNodeCreated = false;
+                    }
+                  }
+                };
+              }
+            }
 
-            };
+
+            // };
           }
 
           document.onkeydown = function(event){

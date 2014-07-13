@@ -3,9 +3,9 @@ var Node = Class.extend({
     init: function(X,Y){
         this.pos = {x: null, y: null};
 
-        this.fillStyle = 'lightgoldenrodyellow';
-        this.width = 25;
-        this.height = 25;
+        this.fillStyle = 'white';
+        this.width = 32;
+        this.height = 32;
 
         this.pos.x = X;
         this.pos.y = Y;
@@ -43,14 +43,14 @@ var Node = Class.extend({
         }else if(this.targetNode){
             this.fillStyle = 'lightcoral';
         }else if(this.open){
-            this.fillStyle = 'lightcyan';
+            this.fillStyle = 'cyan';
         }else if(this.closed){
             this.fillStyle = 'lightblue';
         }else if(this.final){
             this.fillStyle = 'lightsalmon';
         }
         else if(!this.hovering){
-            this.fillStyle = 'lightgoldenrodyellow';
+            this.fillStyle = 'white';
         }
 
         context.beginPath();
@@ -66,24 +66,20 @@ var Node = Class.extend({
             this.hovering = false;
         }
 
-        if(currentState === states.pickingWalls && this.hovering){
-            this.fillStyle = 'rgba(119,136,153,0.5)';
-        }else if(currentState === states.pickingStartNode && this.hovering){
-            this.fillStyle = 'lightgreen';
-        }else if(currentState === states.pickingTargetNode && this.hovering){
-            this.fillStyle = 'lightcoral';
-        }
-        else{
-            this.fillStyle = 'lightgoldenrodyellow';
-        }
-
     },
-    update : function(){ 
-        if(currentState !== states.findPath){
-            this.hover();
+    checkBounds: function(){
+        if(mousePos.x > this.pos.x && mousePos.x < this.pos.x + this.width && mousePos.y > this.pos.y  && mousePos.y < this.pos.y + this.height){
+            return true;
         }else{
-            this.hovering = false;
+            return false;
         }
+    },   
+    update : function(){ 
+        // if(currentState !== states.findPath){
+        //     this.hover();
+        // }else{
+        //     this.hovering = false;
+        // }
 
         this.Render();
     }
