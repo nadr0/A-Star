@@ -29,7 +29,6 @@ var Node = Class.extend({
         this.isWall = false;
         this.startNode = false;
         this.targetNode = false;
-        this.hover();
     },
     calculateFValue: function(){
         this.f = this.h + this.g;

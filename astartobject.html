@@ -36,6 +36,8 @@
           var isStartNodeCreated = false;
           var isTargetNodeCreated = false;
 
+          var debug = '';
+          var text = '';
 
           pathfinder.fillNodeArrays();       
           pathfinder.findAdjacentNodes();
@@ -66,11 +68,27 @@
 
           DrawGrid();
 
+          function reset(){
+            for (var i = 0; i < pathfinder.allNodes.length; i++) {
+              pathfinder.allNodes[i].isWall = false;
+              pathfinder.allNodes[i].open = false;
+              pathfinder.allNodes[i].closed = false;
+              pathfinder.allNodes[i].final = false;
+              pathfinder.allNodes[i].startNode = false;
+              pathfinder.allNodes[i].targetNode = false;
+              pathfinder.allNodes[i].g = 0;
+              pathfinder.allNodes[i].h = 0;
+              pathfinder.allNodes[i].f = 0;
+            };
+            isStartNodeCreated = false;
+            isTargetNodeCreated = false;
+            startPathFinding = false;
+            seek = true;
+          };
+
           function animate(canvas, context,startTime) {
               var time = (new Date()).getTime() - startTime;
               var currentTime = Date.now();
-
-              var text = '';
 
               context.clearRect(0, 0, canvas.width, canvas.height);
               
@@ -80,6 +98,8 @@
                 text = 'Place Start Node';
               }else if(currentState === states.pickingTargetNode){
                 text = 'Place Target Node';
+              }else if(currentState === states.findPath && !pathfinder.targetFound){
+                text = 'Finding Path';
               }
 
               pathfinder.drawNodes();
@@ -91,16 +111,22 @@
                 }
 
                 if(pathfinder.targetFound && seek){
-                  pathfinder.tracePathBack();
+                  text = 'Path Found';
                   seek = false;
+                  pathfinder.tracePathBack();
                 }
               }
               
-              context.fillStyle = 'rgba(0,0,0,0.75)';
+              context.fillStyle = 'rgba(0, 0, 0, 0.75)';
               context.font = '50px arial';
               var lengthOfText = context.measureText(text).width;
               var textPosX =  ((canvas.width - lengthOfText)/2);
-              context.fillText(text, textPosX, 100)
+              context.fillText(text, textPosX, 100);
+
+              context.fillStyle = 'rgba(255, 0, 0, 0.75)';
+              var lengthOfDebug = context.measureText(debug).width;
+              var DebugPosX =  ((canvas.width - lengthOfDebug)/2);
+              context.fillText(debug, DebugPosX, 175);
 
               requestAnimFrame(function() {
                 animate(canvas, context, startTime);
@@ -173,9 +199,6 @@
                 };
               }
             }
-
-
-            // };
           }
 
           document.onkeydown = function(event){
@@ -183,12 +206,30 @@
               if(currentState === states.pickingWalls){
                 currentState = states.pickingStartNode;
               }else if(currentState === states.pickingStartNode){
-                currentState = states.pickingTargetNode;
+
+                if(isStartNodeCreated){
+                  currentState = states.pickingTargetNode;
+                  debug = '';
+                }else{
+                  debug = 'Place a StartNode to continue';
+                }
+
               }else if(currentState === states.pickingTargetNode){
-                currentState = states.findPath;
-                pathfinder.CacluateHueristics();
-                startPathFinding = true;
+
+                if(isTargetNodeCreated){
+                  currentState = states.findPath;
+                  pathfinder.CacluateHueristics();
+                  startPathFinding = true;
+                  debug = '';
+                }else{
+                  debug = 'Place a TargetNode to continue';
+                }
+
+              }else if(currentState === states.findPath){
+                reset();
+                currentState = states.pickingWalls;
               }
+
             }
           }
 
