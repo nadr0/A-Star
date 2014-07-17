@@ -133,6 +133,7 @@ var Pathfinder = Class.extend({
         this.closedList.push(node)
         if(node === this.targetNode){
             this.targetFound = true;
+            startPathFinding = false;
         }
     },
     removeFromOpenList: function(node){

@@ -78,8 +78,8 @@
               pathfinder.allNodes[i].startNode = false;
               pathfinder.allNodes[i].targetNode = false;
               pathfinder.allNodes[i].g = 0;
-              pathfinder.allNodes[i].h = 0;
               pathfinder.allNodes[i].f = 0;
+              pathfinder.allNodes[i].h = 0;
               pathfinder.allNodes[i].parentnode = null;
             };
             // Clear the openList
@@ -102,6 +102,7 @@
             isTargetNodeCreated = false;
             startPathFinding = false;
             seek = true;
+            currentState = states.pickingWalls;
           };
 
           function animate(canvas, context,startTime) {
