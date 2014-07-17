@@ -24,7 +24,7 @@
 
           var seek = true;
 
-          var states = {pickingWalls: 'pickingWalls', pickingStartNode: 'pickingStartNode', pickingTargetNode: 'pickingTargetNode', findPath: 'findPath'};
+          var states = {pickingWalls: 'pickingWalls', pickingStartNode: 'pickingStartNode', pickingTargetNode: 'pickingTargetNode', findPath: 'findPath', pathFound:'pathFound', noPath:'noPath'};
           var currentState = states.pickingWalls;
 
           var pathfinder = new Pathfinder();
@@ -102,8 +102,13 @@
                 text = 'Place Start Node';
               }else if(currentState === states.pickingTargetNode){
                 text = 'Place Target Node';
-              }else if(currentState === states.findPath && !pathfinder.targetFound){
+              }else if(currentState === states.findPath){
                 text = 'Finding Path';
+              }else if(currentState === states.pathFound){
+                text = 'Path Found';
+              }else if(currentState === states.noPath){
+                text = '';
+                debug = 'Path Cannot Be Found';
               }
 
               pathfinder.drawNodes();
@@ -115,7 +120,7 @@
                 }
 
                 if(pathfinder.targetFound && seek){
-                  text = 'Path Found';
+                  currentState = states.pathFound;
                   seek = false;
                   pathfinder.tracePathBack();
                 }
@@ -124,12 +129,12 @@
               context.fillStyle = 'rgba(0, 0, 0, 0.75)';
               context.font = '50px arial';
               var lengthOfText = context.measureText(text).width;
-              var textPosX =  ((canvas.width - lengthOfText)/2);
+              var textPosX =  ((window.innerWidth - lengthOfText)/2);
               context.fillText(text, textPosX, 100);
 
               context.fillStyle = 'rgba(255, 0, 0, 0.75)';
               var lengthOfDebug = context.measureText(debug).width;
-              var DebugPosX =  ((canvas.width - lengthOfDebug)/2);
+              var DebugPosX =  ((window.innerWidth - lengthOfDebug)/2);
               context.fillText(debug, DebugPosX, 175);
 
               requestAnimFrame(function() {
@@ -156,7 +161,7 @@
               if(currentState === states.pickingWalls){
                 if(event){
                   for (var i = 0; i < pathfinder.allNodes.length; i++) {
-                    if(pathfinder.allNodes[i].checkBounds()){
+                    if(pathfinder.allNodes[i].  checkBounds()){
                       if(!pathfinder.allNodes[i].isWall){
                         pathfinder.allNodes[i].isWall = true;
                       }else if(pathfinder.allNodes[i].isWall){

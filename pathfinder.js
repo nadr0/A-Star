@@ -73,7 +73,7 @@ var Pathfinder = Class.extend({
         }else{
             this.targetFound = false;
             startPathFinding = false;
-            debug = 'Path Cannot be Found';
+            currentState = states.noPath;
         }
     },
     adjacentNode: function(currentNode, testingNode){
