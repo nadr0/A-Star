@@ -70,7 +70,10 @@ var Pathfinder = Class.extend({
             if(this.checkingNode.westNode){
                 this.adjacentNode(this.checkingNode, this.checkingNode.westNode);
             }
-
+        }else{
+            this.targetFound = false;
+            startPathFinding = false;
+            debug = 'Path Cannot be Found';
         }
     },
     adjacentNode: function(currentNode, testingNode){
