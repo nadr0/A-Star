@@ -69,16 +69,30 @@
           DrawGrid();
 
           function reset(){
+            // Reset all the nodes 
             for (var i = 0; i < pathfinder.allNodes.length; i++) {
-              pathfinder.allNodes[i].isWall = false;
               pathfinder.allNodes[i].open = false;
               pathfinder.allNodes[i].closed = false;
               pathfinder.allNodes[i].final = false;
+              pathfinder.allNodes[i].isWall = false;
               pathfinder.allNodes[i].startNode = false;
               pathfinder.allNodes[i].targetNode = false;
               pathfinder.allNodes[i].g = 0;
               pathfinder.allNodes[i].h = 0;
               pathfinder.allNodes[i].f = 0;
+              pathfinder.allNodes[i].parentnode = null;
+            };
+            // Clear the openList
+            for (var i = 0; i < pathfinder.openList.length; i++) {
+              pathfinder.openList.splice(i,1);
+            };
+            // Clear the closedList
+            for (var i = 0; i < pathfinder.closedList.length; i++) {
+              pathfinder.closedList.splice(i,1);
+            };
+            // Clear the finalPath
+            for (var i = 0; i < pathfinder.finalPath.length; i++) {
+              pathfinder.finalPath.splice(i,1);
             };
             pathfinder.checkingNode = null;
             pathfinder.startNode = null;

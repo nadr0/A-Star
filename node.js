@@ -20,8 +20,6 @@ var Node = Class.extend({
 
         this.parentNode = null;
 
-        this.hovering = false;
-
         this.open = false;
         this.closed = false;
         this.final = false;
@@ -58,14 +56,6 @@ var Node = Class.extend({
         context.fill();
         context.closePath();
     },
-    hover: function(){
-        if(mousePos.x > this.pos.x && mousePos.x < this.pos.x + this.width && mousePos.y > this.pos.y  && mousePos.y < this.pos.y + this.height){
-            this.hovering = true;
-        }else{
-            this.hovering = false;
-        }
-
-    },
     checkBounds: function(){
         if(mousePos.x > this.pos.x && mousePos.x < this.pos.x + this.width && mousePos.y > this.pos.y  && mousePos.y < this.pos.y + this.height){
             return true;
@@ -74,11 +64,6 @@ var Node = Class.extend({
         }
     },   
     update : function(){ 
-        // if(currentState !== states.findPath){
-        //     this.hover();
-        // }else{
-        //     this.hovering = false;
-        // }
 
         this.Render();
     }
