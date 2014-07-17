@@ -111,7 +111,8 @@
 
               if(startPathFinding){
                 if(!pathfinder.targetFound){
-                    pathfinder.findPath();
+                  console.log('FindPath();');  
+                  pathfinder.findPath();
                 }
 
                 if(pathfinder.targetFound && seek){
@@ -173,12 +174,12 @@
                       if(!pathfinder.allNodes[i].startNode && !isStartNodeCreated && !pathfinder.allNodes[i].isWall){
                         pathfinder.allNodes[i].startNode = true;
                         pathfinder.startNode = pathfinder.allNodes[i];
-                        pathfinder.checkingNode = pathfinder.startNode;
+                        pathfinder.openList.push(pathfinder.startNode);
                         isStartNodeCreated = true;
                       }else if(pathfinder.allNodes[i].startNode){
                         pathfinder.allNodes[i].startNode = false;
+                        pathfinder.openList.splice(0,1);
                         pathfinder.startNode = null;
-                        pathfinder.checkingNode = null;
                         isStartNodeCreated = false;
                       }
                     }

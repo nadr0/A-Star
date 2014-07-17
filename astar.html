@@ -150,7 +150,7 @@
           }
 
           if(!targetFound){
-            addToCloseList(checkingNode);
+            addToClosedList(checkingNode);
             removeFromOpenList(checkingNode);
 
             checkingNode = getSmallestFValueNode();
@@ -210,7 +210,7 @@
           openList.push(node);
         };
 
-        function addToCloseList(node){
+        function addToClosedList(node){
           node.fillStyle = 'Cyan';
           closedList.push(node)
         };

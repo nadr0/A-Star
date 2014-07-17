@@ -52,55 +52,36 @@ var Pathfinder = Class.extend({
         };
     },
     findPath: function(){
-        // Is the target found?
-        if(!this.targetFound){
-            // If the target is not found
+        if(this.openList.length > 0 && !this.targetFound){
+            this.checkingNode = this.getSmallestFValueNode();
 
-            // Determine the values for all the surrounding nodes to the current checkingNode
+            this.addToClosedList(this.checkingNode);
+            this.removeFromOpenList(this.checkingNode);
+
             if(this.checkingNode.northNode){
                 this.adjacentNode(this.checkingNode, this.checkingNode.northNode);
             }
-
             if(this.checkingNode.southNode){
                 this.adjacentNode(this.checkingNode, this.checkingNode.southNode);
             }
-
+            if(this.checkingNode.eastNode){
+                this.adjacentNode(this.checkingNode, this.checkingNode.eastNode);
+            }
             if(this.checkingNode.westNode){
                 this.adjacentNode(this.checkingNode, this.checkingNode.westNode);
             }
 
-            if(this.checkingNode.eastNode){
-                this.adjacentNode(this.checkingNode, this.checkingNode.eastNode);
-            }
-        }
-
-        // If the surrounding nodes are not the target 
-        if(!this.targetFound){
-            // Add the checkingNode to the closedlist for it does not get checked again
-            this.addToCloseList(this.checkingNode);
-            // Remove from the open lists because it does not need to be checked again
-            this.removeFromOpenList(this.checkingNode);
-            // Find a new checking node based off the openlist and the F values of each one
-            this.checkingNode = this.getSmallestFValueNode();
         }
     },
     adjacentNode: function(currentNode, testingNode){
-        // If the testingNode is null the return out
+
+        // If the testingNode is null, return out
         if(!testingNode){
             return;
         }
 
+        // If the testingNode is a wall, return out
         if(testingNode.isWall){
-            console.log('hi');
-            return;
-        }
-
-        // If the testingNode is the targetNode 
-        if(testingNode === this.targetNode){
-            // Set the parentNode of the targetNode to the currentNode 
-            this.targetNode.parentNode = currentNode;
-            // The targetFound set to true for the findPath() stops getting called
-            this.targetFound = true;
             return;
         }
 
@@ -144,9 +125,12 @@ var Pathfinder = Class.extend({
         node.open = true;
         this.openList.sort(function(a, b) {return a.f - b.f})
     },
-    addToCloseList: function(node){
+    addToClosedList: function(node){
         node.closed = true;
         this.closedList.push(node)
+        if(node === this.targetNode){
+            this.targetFound = true;
+        }
     },
     removeFromOpenList: function(node){
         var index = this.openList.indexOf(node);
