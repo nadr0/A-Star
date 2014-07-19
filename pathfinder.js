@@ -184,10 +184,6 @@ var Pathfinder = Class.extend({
         this.openList = [];
         this.closedList = [];
         this.finalPath = [];
-
-        console.log(this.openList.length);
-        console.log(this.closedList.length);
-        console.log(this.finalPath.length);
     }
 
 
