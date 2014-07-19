@@ -69,40 +69,16 @@
           DrawGrid();
 
           function reset(){
-            // Reset all the nodes 
+
             for (var i = 0; i < pathfinder.allNodes.length; i++) {
-              pathfinder.allNodes[i].open = false;
-              pathfinder.allNodes[i].closed = false;
-              pathfinder.allNodes[i].final = false;
-              pathfinder.allNodes[i].isWall = false;
-              pathfinder.allNodes[i].startNode = false;
-              pathfinder.allNodes[i].targetNode = false;
-              pathfinder.allNodes[i].g = 0;
-              pathfinder.allNodes[i].f = 0;
-              pathfinder.allNodes[i].h = 0;
-              pathfinder.allNodes[i].parentnode = null;
+              pathfinder.allNodes[i].reset();
             };
-            // Clear the openList
-            for (var i = 0; i < pathfinder.openList.length; i++) {
-              pathfinder.openList.splice(i,1);
-            };
-            // Clear the closedList
-            for (var i = 0; i < pathfinder.closedList.length; i++) {
-              pathfinder.closedList.splice(i,1);
-            };
-            // Clear the finalPath
-            for (var i = 0; i < pathfinder.finalPath.length; i++) {
-              pathfinder.finalPath.splice(i,1);
-            };
-            pathfinder.checkingNode = null;
-            pathfinder.startNode = null;
-            pathfinder.targetNode = null;
-            pathfinder.targetFound = false;
+            pathfinder.reset();
             isStartNodeCreated = false;
             isTargetNodeCreated = false;
             startPathFinding = false;
             seek = true;
-            currentState = states.pickingWalls;
+
           };
 
           function animate(canvas, context,startTime) {
@@ -128,6 +104,8 @@
 
               pathfinder.drawNodes();
               DrawGrid();
+
+              console.log(currentState);
 
               if(startPathFinding){
                 if(!pathfinder.targetFound){
@@ -248,6 +226,9 @@
                   debug = 'Place a TargetNode to continue';
                 }
 
+              }else if(currentState === states.pathFound || currentState === states.noPath){
+                reset();
+                currentState = states.pickingWalls;
               }
 
             }

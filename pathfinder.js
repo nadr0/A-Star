@@ -11,7 +11,6 @@ var Pathfinder = Class.extend({
         // Current checking node
         this.checkingNode = null;
 
-
         // Start --> Target
         // The startnode to begin the path
         this.startNode = null;
@@ -31,9 +30,6 @@ var Pathfinder = Class.extend({
         // Contains all the nodes
         this.allNodes = [];
 
-        // Data array to store the nodes also to draw/create the nodes in the grid formation
-        this.data = new Array(canvas.height/this.sizeOfTile);
-
     },
     fillNodeArrays: function(){
 
@@ -46,7 +42,7 @@ var Pathfinder = Class.extend({
 
     },
     drawNodes: function (){
-        // Draws all the nodes in the data array
+        // Draws all the nodes in the allNodes array
         for (var i = 0; i < this.allNodes.length; i++) {
             this.allNodes[i].update();
         };
@@ -178,6 +174,25 @@ var Pathfinder = Class.extend({
             this.finalPath.push(node);
             node = node.parentNode;
         }while(node !== null);
+    },
+    reset: function(){
+        this.checkingNode = null;
+        this.startNode = null;
+        this.targetNode = null;
+        this.targetFound = false;
+
+        for (var i = 0; i < this.openList.length; i++) {
+            this.openList.splice(i,1);
+        };
+        console.log(this.openList.length);
+        for (var i = 0; i < this.closedList.length; i++) {
+            this.closedList.splice(i,1);
+        };
+        console.log(this.closedList.length);
+        for (var i = 0; i < this.finalPath.length; i++) {
+            this.finalPath.splice(i,1);
+        };
+        console.log(this.finalPath.length);
     }
 
 

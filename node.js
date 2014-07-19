@@ -66,5 +66,16 @@ var Node = Class.extend({
     update : function(){ 
 
         this.Render();
+    },
+    reset: function(){
+        this.g = 0;
+        this.open = false;
+        this.closed = false;
+        this.final = false;
+        this.parentNode = null;
+        this.isWall = false;
+        this.startNode = false;
+        this.targetNode = false;
+        this.f = 0;
     }
 });
