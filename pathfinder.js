@@ -181,17 +181,12 @@ var Pathfinder = Class.extend({
         this.targetNode = null;
         this.targetFound = false;
 
-        for (var i = 0; i < this.openList.length; i++) {
-            this.openList.splice(i,1);
-        };
+        this.openList = [];
+        this.closedList = [];
+        this.finalPath = [];
+
         console.log(this.openList.length);
-        for (var i = 0; i < this.closedList.length; i++) {
-            this.closedList.splice(i,1);
-        };
         console.log(this.closedList.length);
-        for (var i = 0; i < this.finalPath.length; i++) {
-            this.finalPath.splice(i,1);
-        };
         console.log(this.finalPath.length);
     }
 
