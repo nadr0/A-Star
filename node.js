@@ -13,6 +13,8 @@ var Node = Class.extend({
         this.g = 0;
         this.f = 0;
 
+        this.center = {x: this.pos.x + (this.width/2), y: this.pos.y + (this.height/2)};
+
         this.northNode = null;
         this.southNode = null;
         this.westNode = null;
@@ -43,11 +45,6 @@ var Node = Class.extend({
             this.fillStyle = 'lightblue';
         }else if(this.closed){
             this.fillStyle = 'lightskyblue';
-        }else if(this.final){
-            this.fillStyle = 'lightsalmon';
-        }
-        else if(!this.hovering){
-            this.fillStyle = 'white';
         }
 
         context.beginPath();

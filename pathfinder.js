@@ -8,6 +8,9 @@ var Pathfinder = Class.extend({
         // Final path contains the path of nodes
         this.finalPath = [];
 
+        // Stores the x,y to draw to 
+        this.linePositions = [];
+
         // Current checking node
         this.checkingNode = null;
 
@@ -171,6 +174,11 @@ var Pathfinder = Class.extend({
             node.open = false;
             node.closed = false;
             node.final = true;
+
+            var position = {x: node.center.x, y: node.center.y};
+
+            this.linePositions.push(position);
+
             this.finalPath.push(node);
             node = node.parentNode;
         }while(node !== null);
@@ -181,9 +189,21 @@ var Pathfinder = Class.extend({
         this.targetNode = null;
         this.targetFound = false;
 
+        this.linePositions = [];
         this.openList = [];
         this.closedList = [];
         this.finalPath = [];
+    },
+    linePath: function(){
+
+        for (var i = 0; i < this.linePositions.length - 1; i++) {
+            context.beginPath();
+            context.moveTo(this.linePositions[i].x, this.linePositions[i].y);
+            context.lineTo(this.linePositions[i + 1].x, this.linePositions[i + 1].y);
+            context.stroke();
+            context.closePath();
+        };
+
     }
 
 
