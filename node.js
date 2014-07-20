@@ -45,6 +45,11 @@ var Node = Class.extend({
             this.fillStyle = 'lightblue';
         }else if(this.closed){
             this.fillStyle = 'lightskyblue';
+        }else if(this.final){
+            this.fillStyle = 'lightskyblue';
+        }
+        else if(!this.hovering){
+            this.fillStyle = 'white';
         }
 
         context.beginPath();
