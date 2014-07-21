@@ -198,10 +198,7 @@ var Pathfinder = Class.extend({
 
         for (var i = 0; i < this.linePositions.length - 1; i++) {
             context.beginPath();
-            var gradient = context.createLinearGradient(this.linePositions[i].x,this.linePositions[i].y, this.linePositions[i+1].x,this.linePositions[i+1].y);
-            gradient.addColorStop(0,"red");
-            gradient.addColorStop(1,"green");
-            context.strokeStyle = gradient;
+            context.strokeStyle = 'yellow';
             context.lineWidth = 4;
             context.moveTo(this.linePositions[i].x, this.linePositions[i].y);
             context.lineTo(this.linePositions[i + 1].x, this.linePositions[i + 1].y);
