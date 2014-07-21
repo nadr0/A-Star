@@ -49,7 +49,8 @@
 
             for (var i = 0; i < canvas.width/tilesize; i++) {
               context.beginPath();
-              context.fillStyle = 'black';  
+              context.strokeStyle = 'black';  
+              context.lineWidth = 1;
               context.moveTo(tilesize*i,0);
               context.lineTo(tilesize*i, canvas.height);
               context.stroke();
