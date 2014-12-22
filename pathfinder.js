@@ -4,9 +4,10 @@ var Pathfinder = Class.extend({
         // Open list contains the testing nodes
         this.openList = [];
         // Closed list contains the nodes that have been checked
-        this.closedList = [];
         // Final path contains the path of nodes
         this.finalPath = [];
+
+        this.heap = new minHeap();
 
         // Stores the x,y to draw to 
         this.linePositions = [];
@@ -22,7 +23,7 @@ var Pathfinder = Class.extend({
 
         // The movement cost to go from one tile to another - Manhattan Distance
         // Can only move Up/Down/Left/Right
-        this.moveCost = 100;
+        this.moveCost = 1;
 
         // Bool to keep track if the target is found
         this.targetFound = false;
@@ -51,11 +52,12 @@ var Pathfinder = Class.extend({
         };
     },
     findPath: function(){
-        if(this.openList.length > 0 && !this.targetFound){
+        if(!this.heap.empty() > 0 && !this.targetFound){
+
             this.checkingNode = this.getSmallestFValueNode();
 
             this.addToClosedList(this.checkingNode);
-            this.removeFromOpenList(this.checkingNode);
+            // this.removeFromOpenList(this.checkingNode);
 
             if(this.checkingNode.northNode){
                 this.adjacentNode(this.checkingNode, this.checkingNode.northNode);
@@ -88,10 +90,10 @@ var Pathfinder = Class.extend({
         }
 
         // If the testingNode is not in the closed list - (Has already been checked) 
-        if(!this.checkClosedList(testingNode)){
+        if(testingNode.closed === false){
             // If is the testingNode is in the openList
 
-            if(this.checkOpenList(testingNode)){
+            if(testingNode.open === true){
                 var newGCost = currentNode.g + this.moveCost;
                 if(newGCost < testingNode.g){
                     testingNode.parentNode = currentNode;
@@ -106,42 +108,22 @@ var Pathfinder = Class.extend({
             }
         }
     },
-    checkClosedList: function(testing){
-        for (var i = 0; i < this.closedList.length; i++) {
-            if(testing === this.closedList[i]){
-                return true;
-            }
-        };
-        return false;
-    },        
-    checkOpenList: function(testing){
-        for (var i = 0; i < this.openList.length; i++) {
-            if(testing === this.openList[i]){
-                return true;
-            }
-        };
-        return false;
-    },
     addToOpenList: function(node){
-        this.openList.push(node);
         node.open = true;
-        this.openList.sort(function(a, b) {return a.f - b.f})
+        this.heap.insert(node);
     },
     addToClosedList: function(node){
         node.closed = true;
-        this.closedList.push(node)
         if(node === this.targetNode){
             this.targetFound = true;
             startPathFinding = false;
         }
     },
-    removeFromOpenList: function(node){
-        var index = this.openList.indexOf(node);
-        node.open = false;
-        this.openList.splice(index, 1);
-    },
     getSmallestFValueNode: function(){
-        return this.openList[0];
+        var tempnode = this.heap.removeMin();
+        tempnode.open = false;
+        return tempnode;
+
     },
     CacluateHueristics: function(){
         for (var i = 0; i < this.allNodes.length; i++) {
@@ -189,9 +171,12 @@ var Pathfinder = Class.extend({
         this.targetNode = null;
         this.targetFound = false;
 
+        while(!this.heap.empty()){
+            var tempclear = this.heap.removeMin();
+        };
+
         this.linePositions = [];
         this.openList = [];
-        this.closedList = [];
         this.finalPath = [];
     },
     linePath: function(){
@@ -206,6 +191,9 @@ var Pathfinder = Class.extend({
             context.closePath();
         };
 
+    },
+    setStartNode: function(){
+        this.heap.insert(this.startNode);
     }
 
 

@@ -3,18 +3,11 @@
     <script type="text/javascript" src="class.js"></script>
     <script type="text/javascript" src="node.js"></script>
     <script type="text/javascript" src="pathfinder.js"></script>
-    
+    <script type="text/javascript" src="minheap.js"></script>
     </head>
     <body>
       <canvas id="myCanvas" width="1920" height="960" style="border:1px solid #000000; padding-left: 0; padding-right: 0; margin-left: auto; margin-right: auto; display: block;  "></canvas>
       <script>
-
-            window.requestAnimFrame = (function(callback) {
-            return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-            function(callback) {
-              window.setTimeout(callback, 1000 / 60);
-            };
-          })();
 
           var canvas = document.getElementById('myCanvas');
           var context = canvas.getContext('2d');
@@ -133,7 +126,7 @@
                 pathfinder.linePath();
               }
 
-              requestAnimFrame(function() {
+              requestAnimationFrame(function() {
                 animate(canvas, context, startTime);
               });
           }
@@ -221,6 +214,7 @@
               }else if(currentState === states.pickingTargetNode){
 
                 if(isTargetNodeCreated){
+                  pathfinder.setStartNode();
                   currentState = states.findPath;
                   pathfinder.CacluateHueristics();
                   startPathFinding = true;
@@ -237,9 +231,8 @@
             }
           }
 
-        setTimeout(function() {
-            var startTime = (new Date()).getTime();
-            animate(canvas, context,startTime);
-          }, 1000);
+          var startTime = (new Date()).getTime();
+          animate(canvas, context,startTime);
+        
       </script>
 </body> 
